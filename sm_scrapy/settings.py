@@ -93,7 +93,8 @@ TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 FEED_EXPORT_ENCODING = "utf-8"
 
 # Custom settings
-HTML_DIR = "./html_bucket"
+HTML_DIR = "html_bucket"
+PARSED_DIR = "parsed_bucket"
 SM_DIRS = {
     "MAXIMA": "maxima",
     "LIDL": "lidl",

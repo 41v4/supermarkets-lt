@@ -130,3 +130,4 @@ dmypy.json
 
 # Custom
 html_bucket/*
+parsed_bucket/*
