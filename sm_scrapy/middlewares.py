@@ -87,7 +87,20 @@ class SmScrapyDownloaderMiddleware:
             request.headers['User-Agent'] = 'Custom User-Agent 2'
             # set other headers specific to website2
         elif spider.name == 'lidl_spider':
-            request.headers['User-Agent'] = 'Custom User-Agent 3'
+            request.headers = {
+                'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/112.0',
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+                'Accept-Language': 'en-US,en;q=0.5',
+                # 'Accept-Encoding': 'gzip, deflate, br',
+                'Connection': 'keep-alive',
+                'Referer': 'https://www.lidl.lt/',
+                # 'Cookie': 'CookieConsent={stamp:%27V2Z+AUpettizqW8dACzXz7QZDD1GdKYBRKjMaATk8rSFer1yKLyEkg==%27%2Cnecessary:true%2Cpreferences:true%2Cstatistics:true%2Cmarketing:true%2Cmethod:%27explicit%27%2Cver:1%2Cutc:1678363759766%2Cregion:%27lt%27}; ak_bmsc=55EAFB433E7DD07F21624AC00EC8B855~000000000000000000000000000000~YAAQlzQQYMKxl2+HAQAAQ/OtiROMIlw2qc84NbpXSGc+GzevHqFo6GiXbAr/odEDaBTmGtx7pRRwsaps8SqWjiwmdJvCiWgpOdrA3CmJ7mkjBzUvJQ9ZbeeyD5X6Va+DT0ecU1g6AjVyl4jLP6SKbh254+ODQ86E1Xdr8wWSuqq3oJetlnyHAa87DE5KOQj0/InRC2SZKKgX31a6mjBx2DKo8fwxPOnOLd16xEWENVFQxqzKBodKTsiB1HjK2RSef6JliuGoEtCwFyrkuDouupTmS2apD+cztrFpVT42RwxSqqrXtV+R9QvRIMyvXAN0zwTOQjll1NEIH/qEyXjbrsToMrWHX3l6/gWeYjTjunuzhvO9CGHGi3LCsfhlhzThvyLBbGNk1BU=; bm_sv=FF0246770101137D376106071BD86EEA~YAAQlzQQYMaxl2+HAQAAQ/atiRPYnDNaFwnod9BPNQElPMzEUj5DQF7737FNLDdIMbo+EWJe5BxOvqgZDo8CMWxYcl9IJHZQezy8ca43qm2ceHLnpAOx5IolgRo+fv3DA/rPkXShDp0i/dfE+oqvbfbqCjVVlQlhS6lnxDilVddVk4f4YwcJ0oBT0NM4QIZsEb6Lbnt3eFEKnTCXVe85ejFKMdmOI2UeWjXEnhakh/+lYojwLdkkAM52FoY2~1',
+                'Upgrade-Insecure-Requests': '1',
+                'Sec-Fetch-Dest': 'document',
+                'Sec-Fetch-Mode': 'navigate',
+                'Sec-Fetch-Site': 'same-origin',
+                'Sec-Fetch-User': '?1',
+            }
             # set other headers specific to website3
         elif spider.name == 'rimi_spider':
             request.headers['User-Agent'] = 'Custom User-Agent 4'
