@@ -2,6 +2,8 @@ import datetime
 import os
 import re
 
+from sm_scrapy.settings import SM_DIRS
+
 
 def is_valid_date_arg(date_arg):
     try:
@@ -9,6 +11,11 @@ def is_valid_date_arg(date_arg):
         return True
     except ValueError:
         return False
+    
+def is_valid_sm_arg(sm_arg):
+    if sm_arg.upper() in SM_DIRS:
+        return True
+    return False
     
 def is_html_dir_exist(html_dir):
     if os.path.exists(html_dir):

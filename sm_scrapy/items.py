@@ -82,3 +82,7 @@ class LidlProductItem(scrapy.Item):
     def set_all_as_none(self):
         for key, _ in self.fields.items():
             self[key] = None
+
+class ImageItem(scrapy.Item):
+    fn_num = scrapy.Field(output_processor=TakeFirst())
+    img_body = scrapy.Field(output_processor=TakeFirst())
