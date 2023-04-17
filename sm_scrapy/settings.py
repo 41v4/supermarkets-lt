@@ -102,3 +102,4 @@ SM_DIRS = {
     "RIMI": "rimi",
     "NORFA": "norfa",
 }
+IMG_DIR = "img_bucket"
