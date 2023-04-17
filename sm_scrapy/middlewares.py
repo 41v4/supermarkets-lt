@@ -69,8 +69,8 @@ class SmScrapyDownloaderMiddleware:
         return s
 
     def process_request(self, request, spider):
-        if spider.name == 'maxima_spider':
-            request.headers = {
+        if spider.name == 'maxima_crawler':
+            request.headers.update({
                 'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/112.0',
                 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
                 'Accept-Language': 'en-US,en;q=0.5',
@@ -82,7 +82,7 @@ class SmScrapyDownloaderMiddleware:
                 'Sec-Fetch-Dest': 'document',
                 'Sec-Fetch-Mode': 'navigate',
                 'Sec-Fetch-Site': 'cross-site',
-            }
+            })
         elif spider.name == 'iki_spider':
             request.headers['User-Agent'] = 'Custom User-Agent 2'
             # set other headers specific to website2

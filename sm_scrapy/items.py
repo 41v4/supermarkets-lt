@@ -31,13 +31,15 @@ def clean_price(value):
 
 
 class MaximaHtmlItem(scrapy.Item):
-    page_num = scrapy.Field(output_processor=TakeFirst())
     html = scrapy.Field(output_processor=TakeFirst())
 
 class MaximaProductItem(scrapy.Item):
+    fn_num = scrapy.Field(output_processor=TakeFirst())
     name = scrapy.Field(input_processor=MapCompose(clean_str), output_processor=TakeFirst())
     price = scrapy.Field(input_processor=MapCompose(clean_str, clean_price), output_processor=TakeFirst())
     discount = scrapy.Field(input_processor=MapCompose(clean_str, clean_discount), output_processor=TakeFirst())
+    unit_pricing = scrapy.Field(input_processor=MapCompose(clean_str), output_processor=TakeFirst())
+    weight = scrapy.Field(input_processor=MapCompose(clean_str), output_processor=TakeFirst())
     product_url = scrapy.Field(output_processor=TakeFirst())
     img_url = scrapy.Field(output_processor=TakeFirst())
     descr = scrapy.Field(output_processor=TakeFirst())

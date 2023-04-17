@@ -35,64 +35,78 @@ class MaximaParser(scrapy.Spider):
         # read HTML files from local storage
         for fn in os.listdir(base_dir):
             if fn.endswith('.html'):
+                fn_num = fn.split('.html')[0].strip()
                 fp = os.path.join(base_dir, fn)
                 with open(fp, 'r', encoding='utf-8') as f:
                     html = f.read()
                 url = f'file://{fp}'
                 # create a request object with the local file URL
-                request = scrapy.Request(url, self.parse)
+                request = scrapy.Request(url, self.parse, meta={"fn_num": fn_num})
                 # add the raw HTML as a meta field of the request
                 request.meta['html'] = html
                 # yield the request object
                 yield request
     
     def parse(self, response):
-        product_elems = response.css("div.card.card-small.is-pointer")
+        fn_num = response.meta["fn_num"]
+        product_elem = response
 
-        for product_elem in product_elems:
-            item_loader = ItemLoader(item=MaximaProductItem(), selector=product_elem)
+        item_loader = ItemLoader(item=MaximaProductItem(), selector=product_elem)
 
-            # name
-            name = self.parse_name(product_elem)
-            item_loader.add_value('name', name)
+        # fn_num
+        item_loader.add_value('fn_num', fn_num)
 
-            # price
-            price = self.parse_price(product_elem)
-            item_loader.add_value('price', price)
+        # name
+        name = self.parse_name(product_elem)
+        item_loader.add_value('name', name)
 
-            # discount
-            discount = self.parse_discount(product_elem)
-            item_loader.add_value('discount', discount)
+        # price
+        price = self.parse_price(product_elem)
+        item_loader.add_value('price', price)
 
-            # product URL
-            item_loader.add_value('product_url', None)
+        # discount
+        discount = self.parse_discount(product_elem)
+        item_loader.add_value('discount', discount)
 
-            # product img
-            img_url = self.parse_img(product_elem)
-            item_loader.add_value('img_url', img_url)
+        # unit_pricing
+        unit_pricing = self.parse_unit_pricing(product_elem)
+        item_loader.add_value('unit_pricing', unit_pricing)
 
-            # descr
-            item_loader.add_value('descr', None)
+        # weight
+        weight = self.parse_weight(product_elem)
+        item_loader.add_value('weight', weight)
 
-            # card_required
-            card_required = self.check_card_required(product_elem)
-            item_loader.add_value('card_required', card_required)
+        # product URL
+        item_loader.add_value('product_url', None)
 
-            # app_required
-            app_required = self.check_app_required(product_elem)
-            item_loader.add_value('app_required', app_required)
+        # product img
+        img_url = self.parse_img(product_elem)
+        item_loader.add_value('img_url', img_url)
 
-            # valid_from
-            item_loader.add_value('valid_from', None)
+        # descr
+        descr = self.parse_descr(product_elem)
+        item_loader.add_value('descr', descr)
 
-            # valid_to
-            valid_to = self.parse_valid_to(product_elem)
-            item_loader.add_value('valid_to', valid_to)
+        # card_required
+        card_required = self.check_card_required(product_elem)
+        item_loader.add_value('card_required', card_required)
 
-            yield item_loader.load_item()
+        # app_required
+        app_required = self.check_app_required(product_elem)
+        item_loader.add_value('app_required', app_required)
+
+        # valid_from
+        valid_from = self.parse_valid_from(product_elem)
+        item_loader.add_value('valid_from', valid_from)
+
+        # valid_to
+        valid_to = self.parse_valid_to(product_elem)
+        item_loader.add_value('valid_to', valid_to)
+
+        yield item_loader.load_item()
 
     def parse_name(self, elem):
-        return elem.css("h4::text").get()
+        return elem.css("h2.offer-modal-title::text").get()
 
     def parse_price(self, elem):
         price = ""
@@ -119,8 +133,21 @@ class MaximaParser(scrapy.Spider):
                 logger.error(f"Invalid discount: {discount}")
         return None
     
+    def parse_unit_pricing(self, elem):
+        possible_lines = elem.css("div.offer-modal-card.h-100 div.text-small.mb-4::text").getall()
+        for line in possible_lines:
+            if helpers.is_unit_pricing_valid_maxima(line):
+                return line
+        return None
+    
+    def parse_weight(self, elem): # not exist
+        return None
+    
     def parse_img(self, elem):
-        return elem.css("div.offer-image img::attr(data-src)").get()
+        return elem.css("div.image-col-wrapper img.img-fluid::attr(src)").get()
+    
+    def parse_descr(self, elem):
+        return elem.css("div.text-small.mb-3::text").get()
     
     def check_card_required(self, elem):
         card_required_elem = elem.xpath(
@@ -134,5 +161,12 @@ class MaximaParser(scrapy.Spider):
         ).get()
         return app_required_elem is not None
     
+    def parse_valid_from(self, elem):
+        date_str = elem.css("div.offer-modal-date::text").get()
+        dates = helpers.extract_maxima_dates(date_str)
+        return dates.get("start_date")
+    
     def parse_valid_to(self, elem):
-        return elem.css("p.offer-dateTo-wrapper span::text").get()
+        date_str = elem.css("div.offer-modal-date::text").get()
+        dates = helpers.extract_maxima_dates(date_str)
+        return dates.get("end_date")
