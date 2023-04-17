@@ -33,9 +33,10 @@ class SmScrapyPipeline:
 
     def process_item(self, item, spider):
         if isinstance(item, MaximaHtmlItem):
-            self.store_html_maxima(item)
+            self.store_html_maxima(item, self.maxima_seq)
+            self.maxima_seq += 1
         elif isinstance(item, MaximaProductItem):
-            self.store_parsed_maxima(item, self.maxima_seq)
+            self.store_parsed_maxima(item)
             self.maxima_seq += 1
             return item
         elif isinstance(item, LidlHtmlItem):
@@ -44,16 +45,16 @@ class SmScrapyPipeline:
         elif isinstance(item, LidlProductItem):
             self.store_parsed_lidl(item)
 
-    def store_html_maxima(self, item):
-        page_num = item["page_num"]
+    def store_html_maxima(self, item, seq):
         html = item["html"]
-        html_path = Path(HTML_DIR) / SM_DIRS["MAXIMA"] / self.CURRENT_DATE_DIR / f"{page_num}.html"
+        html_path = Path(HTML_DIR) / SM_DIRS["MAXIMA"] / self.CURRENT_DATE_DIR / f"{seq}.html"
         html_path.parent.mkdir(parents=True, exist_ok=True)
         with open(html_path, 'w', encoding='utf-8') as f:
             f.write(html)
 
     def store_parsed_maxima(self, item):
-        parsed_path = Path(PARSED_DIR) / SM_DIRS["MAXIMA"] / self.CURRENT_DATE_DIR / f"{self.maxima_seq}.json"
+        fn_num = item["fn_num"]
+        parsed_path = Path(PARSED_DIR) / SM_DIRS["MAXIMA"] / self.CURRENT_DATE_DIR / f"{fn_num}.json"
         parsed_path.parent.mkdir(parents=True, exist_ok=True)
         with open(parsed_path, 'w', encoding="utf-8") as fp:
             json.dump(dict(item), fp, indent=4, ensure_ascii=False)
